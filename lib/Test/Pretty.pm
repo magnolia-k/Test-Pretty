@@ -62,9 +62,13 @@ if (Test::Builder->VERSION < 1.3) {
         };
 
         *Test::Builder::ok = sub {
-            my @args = @_;
+            my @args =  @_;
+
+            my $ctx =   $_[0]->ctx;
+            my $trace = $ctx->trace;
+
             $args[2] ||= do {
-                my ( $package, $filename, $line ) = caller($Test::Builder::Level);
+                my ( $package, $filename, $line ) = $trace->call;
                 require Test2::Formatter::Pretty;
                 my $get_src_line = Test2::Formatter::Pretty::get_src_line();
                 "L $line: " . $get_src_line->($filename, $line);
@@ -72,7 +76,9 @@ if (Test::Builder->VERSION < 1.3) {
             if (@NAMES) {
                 $args[2] = "(" . join( '/', @NAMES)  . ") " . $args[2];
             }
+
             local $Test::Builder::Level = $Test::Builder::Level + 1;
+            $ctx->release;
             &$ORIGINAL_ok(@_);
         };
     }

@@ -21,3 +21,5 @@ README
 /Build
 !Build/
 !META.json
+local/
+cpanfile.snapshot

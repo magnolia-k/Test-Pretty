@@ -389,3 +389,21 @@ sub _skip {
 
 1;
 
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+Test::Pretty::Originator - Original Test::Pretty code
+
+=head1 DESCRIPTION
+
+This module is original Copy of Test::Pretty.
+
+If the version of Test::More installed is less than 1.3,
+this module will be executed.
+
+=cut

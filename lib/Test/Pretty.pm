@@ -5,81 +5,26 @@ use warnings;
 
 our $VERSION = "0.40";
 
-use if $^O eq 'MSWin32', 'Win32::Console::ANSI';
-use Term::Encoding ();
-use Term::ANSIColor ();
-use Scope::Guard;
-
 require Test::Builder;
 
-if (Test::Builder->VERSION < 1.3) {
-
-    # In an environment where Test2 is not loaded, use the original Test::Pretty.
-    require Test::Pretty::Originator;
-
-} else {
-    my $builder = Test::Builder->new();
-    my $hub = $builder->{Stack}->top;
-
+if (Test::Builder->VERSION > 1.3) {
     if (!$ENV{HARNESS_ACTIVE} || $ENV{PERL_TEST_PRETTY_ENABLED}) {
+
+        my $builder = Test::Builder->new();
+        my $hub = $builder->{Stack}->top;
+
         require Test2::Formatter::Pretty;
         my $formatter = Test2::Formatter::Pretty->new();
         $formatter->encoding(Term::Encoding::term_encoding());
         $hub->format($formatter);
     } else {
-
-        no warnings 'redefine';
-        my $ORIGINAL_ok = \&Test::Builder::ok;
-        my @NAMES;
-
-        require Term::Encoding;
-        require Test2::Formatter::Pretty::TAP;
-        my $formatter = Test2::Formatter::Pretty::TAP->new;
-        $formatter->encoding(Term::Encoding::term_encoding());
-        $hub->format($formatter);
-
-        *colored = -t STDOUT || $ENV{PERL_TEST_PRETTY_ENABLED} ? \&Term::ANSIColor::colored : sub { $_[1] };
-
-        my ($arrow_mark, $failed_mark);
-        my $encoding_is_utf8 = Term::Encoding::term_encoding() =~ /^utf-?8$/i;
-        if ($encoding_is_utf8) {
-            $arrow_mark = "\x{bb}";
-            $failed_mark = " \x{2192} ";
-        } else {
-            $arrow_mark = ">>";
-            $failed_mark = " x ";
-        }
-
-        *Test::Builder::subtest = sub {
-            push @NAMES, $_[1];
-            my $guard = Scope::Guard->new(sub {
-                pop @NAMES;
-            });
-            $_[0]->note(colored(['cyan'], $arrow_mark x (@NAMES*2)) . " " . join(colored(['yellow'], $failed_mark), $NAMES[-1]));
-            $_[2]->();
-        };
-
-        *Test::Builder::ok = sub {
-            my @args =  @_;
-
-            my $ctx =   $_[0]->ctx;
-            my $trace = $ctx->trace;
-
-            $args[2] ||= do {
-                my ( $package, $filename, $line ) = $trace->call;
-                require Test2::Formatter::Pretty;
-                my $get_src_line = Test2::Formatter::Pretty::get_src_line();
-                "L $line: " . $get_src_line->($filename, $line);
-            };
-            if (@NAMES) {
-                $args[2] = "(" . join( '/', @NAMES)  . ") " . $args[2];
-            }
-
-            local $Test::Builder::Level = $Test::Builder::Level + 1;
-            $ctx->release;
-            &$ORIGINAL_ok(@_);
-        };
+        # do nothing ....not pretty.
     }
+
+} else {
+
+    # In an environment where Test2 is not loaded, use the original Test::Pretty.
+    require Test::Pretty::Compat;
 }
 
 1;

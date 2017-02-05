@@ -4,7 +4,7 @@
       "Tokuhiro Matsuno <tokuhirom AAJKLFJEF@ GMAIL COM>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v2.5.0, CPAN::Meta::Converter version 2.150005",
+   "generated_by" : "Minilla/v3.0.9, CPAN::Meta::Converter version 2.150005",
    "license" : [
       "perl_5"
    ],
@@ -28,7 +28,7 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build" : "0.38"
+            "Module::Build::Tiny" : "0.035"
          }
       },
       "develop" : {
@@ -68,16 +68,16 @@
    "release_status" : "unstable",
    "resources" : {
       "bugtracker" : {
-         "web" : "https://github.com/tokuhirom/Test-Pretty/issues"
+         "web" : "https://github.com/magnolia-k/Test-Pretty/issues"
       },
-      "homepage" : "https://github.com/tokuhirom/Test-Pretty",
+      "homepage" : "https://github.com/magnolia-k/Test-Pretty",
       "repository" : {
          "type" : "git",
-         "url" : "git://github.com/tokuhirom/Test-Pretty.git",
-         "web" : "https://github.com/tokuhirom/Test-Pretty"
+         "url" : "git://github.com/magnolia-k/Test-Pretty.git",
+         "web" : "https://github.com/magnolia-k/Test-Pretty"
       }
    },
-   "version" : "0.32",
+   "version" : "0.40",
    "x_contributors" : [
       "Kenichi Ishigaki <ishigaki@cpan.org>",
       "mattn <mattn.jp@gmail.com>",
@@ -90,7 +90,8 @@
       "moznion <moznion@gmail.com>",
       "Zoffix Znet <cpan@zoffix.com>",
       "Sean Zellmer <sean@lejeunerenard.com>",
-      "Tokuhiro Matsuno <tokuhirom@gmail.com>"
+      "Tokuhiro Matsuno <tokuhirom@gmail.com>",
+      "Magnolia K <magnolia.k@icloud.com>"
    ],
    "x_serialization_backend" : "JSON::PP version 2.27300"
 }

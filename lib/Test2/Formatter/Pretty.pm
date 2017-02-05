@@ -3,15 +3,15 @@ package Test2::Formatter::Pretty;
 use strict;
 use warnings;
 
-our $VERSION = '0.40';
-
-use parent qw/Test::Builder::Formatter/;
+BEGIN { require Test2::Formatter::TAP; our @ISA = qw(Test2::Formatter::TAP) }
 use Test2::Util::HashBase qw{ handles _encoding };
 
 BEGIN {
-    *OUT_STD  = Test::Builder::Formatter->can('OUT_STD');
-    *OUT_ERR  = Test::Builder::Formatter->can('OUT_ERR');
-    *OUT_TODO  = Test::Builder::Formatter->can('OUT_TODO');
+    *OUT_STD = Test2::Formatter::TAP->can('OUT_STD');
+    *OUT_ERR = Test2::Formatter::TAP->can('OUT_ERR');
+
+    my $todo = OUT_ERR() + 1;
+    *OUT_TODO = sub() { $todo };
 }
 
 # Conditionally load Windows Term encoding
@@ -50,12 +50,18 @@ sub get_src_line {
 my $TERM_ENCODING  = Term::Encoding::term_encoding();
 my $SHOW_DUMMY_TAP = $ENV{HARNESS_ACTIVE} ? 1 : 0; 
 
+sub init {
+    my $self = shift;
+    $self->SUPER::init(@_);
+    $self->{+HANDLES}->[OUT_TODO] = $self->{+HANDLES}->[OUT_STD];
+}
+
 sub event_ok {
     my $self = shift;
     my ($e, $num) = @_;
 
     # The OK event of subtest is not displayed.
-    return [OUT_STD, ""] if ($e->subtest_id and $e->{pass});
+    return if ($e->subtest_id and $e->{pass});
 
     my ($name, $todo) = @{$e}{qw/name todo/};
     my $in_todo  = defined($todo);
@@ -104,6 +110,10 @@ sub event_skip {
     my $name   = $e->name;
     my $reason = $e->reason;
     my $todo   = $e->todo;
+
+    # Only when skip & todo is output of TAP it follows
+    # the original Test::Pretty's behavior, but probably
+    # it is better to change it according to skip.
 
     my $out = "";
     $out .= "not " unless $e->{pass};
@@ -170,6 +180,13 @@ sub event_plan {
     }
 
     return [OUT_STD, "$plan\n"];
+}
+
+sub event_todo_diag {
+    my $self = shift;
+    my @out = $self->event_diag(@_);
+    $out[0]->[0] = OUT_TODO();
+    return @out;
 }
 
 sub finalize {

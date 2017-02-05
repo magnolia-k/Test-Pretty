@@ -26,8 +26,6 @@ if (Test::Builder->VERSION < 1.3) {
         my $formatter = Test2::Formatter::Pretty->new();
         $formatter->encoding(Term::Encoding::term_encoding());
         $hub->format($formatter);
-
-        $builder->no_header(1);
     } else {
 
         no warnings 'redefine';

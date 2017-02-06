@@ -1,4 +1,4 @@
-package Test::Pretty::Originator;
+package Test::Pretty::Compat;
 use strict;
 use warnings;
 use 5.008001;
@@ -149,7 +149,7 @@ END {
     if( $ORIGINAL_PID!= $$ ) {
         goto NO_ENDING;
     }
-    if ($Test::Pretty::Originator::NO_ENDING) {
+    if ($Test::Pretty::Compat::NO_ENDING) {
         goto NO_ENDING;
     }
 
@@ -397,7 +397,7 @@ __END__
 
 =head1 NAME
 
-Test::Pretty::Originator - Original Test::Pretty code
+Test::Pretty::Compat - Original Test::Pretty code
 
 =head1 DESCRIPTION
 
